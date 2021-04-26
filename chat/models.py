@@ -4,8 +4,6 @@ from django.utils import timezone
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
-import datetime
-
 
 class Thread(models.Model):
     user1 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='user_one')
@@ -44,8 +42,6 @@ class Message(models.Model):
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='from_user')
     to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='to_user')
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
-    created_date = models.DateField(default=datetime.datetime.today())
-    created_time = models.TimeField(default=datetime.datetime.now().time())
     timestamp = models.DateTimeField(default=timezone.now)
 
     class Meta:
