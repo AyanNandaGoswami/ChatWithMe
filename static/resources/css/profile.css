@@ -85,3 +85,14 @@ body {
     margin-left: 20px;
     border-radius: 25px;
 }
+
+
+/* Mobile screen */
+@media only screen and (max-width: 500px) {
+    .logout {
+        margin-top: 20px;
+        margin-left: 0px;
+    }
+}
+
+

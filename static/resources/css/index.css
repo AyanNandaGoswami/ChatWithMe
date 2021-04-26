@@ -37,3 +37,13 @@ body {
     padding: 5px 20px;
     margin-left: 20px;
 }
+
+
+/* Mobile screen */
+@media only screen and (max-width: 500px) {
+    .logout {
+        margin-top: 20px;
+        margin-left: 0px;
+    }
+}
+
