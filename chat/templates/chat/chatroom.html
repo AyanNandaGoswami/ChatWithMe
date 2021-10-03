@@ -99,7 +99,7 @@
 
 		/* connection request */
         const chatSocket = new WebSocket(
-            'ws://'
+            (window.location.protocol === 'https:' ? 'wss' : 'ws') + '://'
             + window.location.host
             + '/ws/chat/'
             + friendName['username']
