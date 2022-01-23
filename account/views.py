@@ -2,9 +2,13 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.db.models import Value as V
+from django.db.models.functions import Concat
+from django.db.models import Q
 
 from .serializers import UserSerializer
 from .models import FriendList
+from chat.models import Notification
 
 
 class RegisterView(View):
@@ -43,14 +47,28 @@ class SearchuserView(View):
     template_name = 'account/search-result-user.html'
 
     def post(self, request):
-        users = User.objects.filter(first_name__icontains=request.POST['query'])
-        user = request.user
-        serialized_data = UserSerializer(user)
-        if users:
+        friend_flag_list = []
+        request_flag_list = []
+        queryset = User.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(full_name__icontains=request.POST['query'])
+        friend_obj = FriendList.objects.filter(user=request.user).last()
+        if friend_obj is not None:
+            for i in queryset:
+                friend_flag_list.append(True) if friend_obj.friends.filter(pk=i.id) else friend_flag_list.append(False)
+                request_flag_list.append(False) if Notification.objects.filter(Q(created_by=request.user) & Q(to_user=i)).last() is None else request_flag_list.append(True)
+        else:
+            for i in queryset:
+                friend_flag_list.append(False)
+                request_flag_list.append(False) if Notification.objects.filter(Q(created_by=request.user) & Q(to_user=i) & Q(status__exact='active')).last() is None else request_flag_list.append(True)
+
+        serialized_data = UserSerializer(request.user)
+
+        if queryset:
             context = {
-                'users': users,
+                'users': zip(queryset, friend_flag_list, request_flag_list),
                 'logged_in_user': serialized_data.data
             }
             return render(request, self.template_name, context)
         else:
             return HttpResponse('No user\'s found with this query.')
+
+

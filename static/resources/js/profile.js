@@ -24,3 +24,25 @@ function removeFromList(params) {
         }
     });
 }
+
+
+
+function action_taken(id, action) {
+    let csrfToken = $("input[name=csrfmiddlewaretoken").val();
+    $.ajax({
+        type: 'POST',
+        url: '/account/accept-reject-request/',
+        data: {
+            'notification_id': id,
+            'action': action,
+            csrfmiddlewaretoken: csrfToken
+        },
+        dataType: 'json', 
+        
+        success: function (res) {
+            console.log(res);
+        }
+    });
+}
+
+

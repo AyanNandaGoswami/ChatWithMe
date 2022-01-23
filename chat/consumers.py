@@ -1,12 +1,12 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from django.contrib.auth.models import User
 from django.db.models import Q
-from asgiref.sync import sync_to_async
-
+from asgiref.sync import sync_to_async, async_to_sync
 import json
-
-from chat.models import Thread, Message
+from chat.models import Thread, Message, Notification
 from account.serializers import UserSerializer
+from .serializers import NotificationSerializer
+from account.models import FriendList
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -17,6 +17,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         me = self.scope['user']     # logged in user
         friend_name = self.scope['url_route']['kwargs']['friend']   # get the username of that user, whoom you want to chat
 
+        print(friend_name)
         friend_instance = await sync_to_async(User.objects.get, thread_sensitive=True)(username=friend_name)    # get user object of friend
 
         # create a new Thread object if thread of specific chat does not exists, otherwise return the thread
@@ -81,7 +82,58 @@ class ChatConsumer(AsyncWebsocketConsumer):
         })) 
 
 
+class NotificationConsumer(WebsocketConsumer):
+    def connect(self, *args, **kwargs):
+        print('connect')
+        user = self.scope['url_route']['kwargs']['user_id']
+        room_name = user + '_notification'
+        room_group_name = 'room_%s' % room_name
+        queryset = Notification.objects.filter(Q(to_user__id=user) & Q(status__exact="active"))
+        serializer = NotificationSerializer(queryset, many=True)
+        async_to_sync(self.channel_layer.group_add)(
+            room_group_name,
+            self.channel_name
+        )
+        queryset = FriendList.objects.filter(user=user)
+        for i in queryset:
+                queryset = i.friends.all()
+        friend_serializer = UserSerializer(queryset, many=True)
+        self.accept()
+        self.send(
+            json.dumps({'notifications': serializer.data, 'friends': friend_serializer.data})
+        )
+
+    def disconnect(self, close_code):
+        user = self.scope['url_route']['kwargs']['user_id']
+        room_name = user + '_notification'
+        room_group_name = 'room_%s' % room_name
+        self.channel_layer.group_discard (
+            room_group_name,
+            self.channel_name
+        )
+
+    def send_notification(self, event):
+        serializer = NotificationSerializer(event['queryset'], many=event['many'])
         
-        
+        queryset = FriendList.objects.filter(user=event['user']).last()
+        if queryset is not None:
+            queryset = queryset.friends.all()
+        else:
+            queryset = []
+
+        if event['many'] is False:
+            res = {
+                'notifications': [serializer.data],
+                'friends': UserSerializer(queryset, many=True).data
+            }
+        else:
+            res = {
+                'notifications': serializer.data,
+                'friends': UserSerializer(queryset, many=True).data
+            }
+
+        self.send(
+            json.dumps(res)
+        )
 
 

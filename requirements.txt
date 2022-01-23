@@ -8,6 +8,8 @@ constantly==15.1.0
 cryptography==3.4.7
 daphne==3.0.2
 Django==3.2
+django-ckeditor==6.2.0
+django-js-asset==1.2.2
 djangorestframework==3.12.4
 gunicorn==20.1.0
 hyperlink==21.0.0
@@ -23,7 +25,6 @@ service-identity==18.1.0
 six==1.15.0
 sqlparse==0.4.1
 Twisted==21.2.0
-# twisted-iocpsupport==1.0.1
 txaio==21.2.1
 typing-extensions==3.7.4.3
 zope.interface==5.4.0

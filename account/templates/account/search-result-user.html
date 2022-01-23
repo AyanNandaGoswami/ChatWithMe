@@ -41,7 +41,7 @@
 
     <div class="container my-container">
         <div class="conact-list-container">
-            {% for i in users %}
+            {% for i,friend,request in users %}
                 <div class="row my-row">
                     {% if user.username == i.username %}
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 my-col">
@@ -57,7 +57,7 @@
                         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col">  
                             <img src="https://i.postimg.cc/BQgBL3Fm/ellipsis.png" class="menu-image" style="display: none;">
                         </div>
-                    {% else %}
+                    {% elif friend %}
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 my-col">
                             <a href="{% url 'chatroom' i.username %}" class="my-anchor">
                                 <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="profile-image">
@@ -65,15 +65,40 @@
                         </div>
                         <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7 my-col">  
                             <a href="{% url 'chatroom' i.username %}" class="my-anchor">
-                                <p class="profile-name">{{ i.first_name }}</p>
+                                <p class="profile-name">{{ i.first_name }} {{ i.last_name }}</p>
                             </a>
                         </div>
                         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col dropdown">  
-                            <img src="https://i.postimg.cc/BQgBL3Fm/ellipsis.png" class="menu-image dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://i.postimg.cc/G2j8qRc6/friends.png" class="menu-image dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 {% csrf_token %}
                                 <li><a class="dropdown-item" id="add-to-list-id" onclick="addToList('{{i.username}}')">Add to list</a></li>
                             </ul>
+                        </div>
+                    {% elif request %}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 my-col">
+                            <a href="{% url 'chatroom' i.username %}" class="my-anchor">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="profile-image">
+                            </a>
+                        </div>
+                        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7 my-col">
+                            <p class="profile-name">{{ i.first_name }} {{ i.last_name }}</p>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col dropdown">  
+                            <img src="https://i.postimg.cc/wMm5qvLZ/user-2.png" class="menu-image">
+                        </div>
+                    {% else %}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 my-col">
+                            <a href="{% url 'chatroom' i.username %}" class="my-anchor">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="profile-image">
+                            </a>
+                        </div>
+                        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7 my-col">
+                            <p class="profile-name">{{ i.first_name }} {{ i.last_name }}</p>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col dropdown">
+                            {% csrf_token %}
+                            <img src="https://i.postimg.cc/RZ3t92Rn/add-user.png" onclick="addToList('{{i.username}}')" id="friend_request_image_id" class="menu-image">
                         </div>
                     {% endif %}
                 </div>

@@ -22,10 +22,12 @@ from home.views import IndexView
 from account.views import LoginView, RegisterView, ProfileView, SearchuserView
 from account.api import LogoutAPI
 from chat.views import ChatIndexView
+from home.views import showFirebaseJS
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('firebase-messaging-sw.js',showFirebaseJS,name="show_firebase_js"),
     path('', IndexView.as_view(), name='index'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutAPI.as_view(), name='logout'),

@@ -16,6 +16,7 @@
     <!-- Static css links -->
     <link rel="stylesheet" href="{% static 'resources/css/index.css' %}">
 
+
     <title>Chat with friends</title>
   </head>
   <body>
@@ -77,6 +78,49 @@
     </div>
 
     
+
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js";
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-messaging.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-analytics.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtzO9tXSnWmmH4df3m0EQPAwpu6DP_y6o",
+            authDomain: "push-noti-aff53.firebaseapp.com",
+            projectId: "push-noti-aff53",
+            storageBucket: "push-noti-aff53.appspot.com",
+            messagingSenderId: "978127399610",
+            appId: "1:978127399610:web:c69c1bd4026d01d3a1b083",
+            measurementId: "G-NY05LLW5PY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        // Get registration token. Initially this makes a network call, once retrieved
+        // subsequent calls to getToken will return from cache.
+        const messaging = getMessaging();
+        getToken(messaging, { vapidKey: 'AIzaSyCtzO9tXSnWmmH4df3m0EQPAwpu6DP_y6o' }).then((currentToken) => {
+            console.log('ok')
+        
+        if (currentToken) {
+            // Send the token to your server and update the UI if necessary
+            // ...
+        } else {
+            // Show permission request UI
+            console.log('No registration token available. Request permission to generate one.');
+            // ...
+        }
+        }).catch((err) => {
+        console.log('An error occurred while retrieving token. ', err);
+        // ...
+        });
+      </script>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>

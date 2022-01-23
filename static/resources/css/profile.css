@@ -1,7 +1,7 @@
 body {
     padding: 0;
     margin: 0;
-    background-color: #fff;
+    background-color: rgb(48, 47, 47);
 }
 
 .my-container {
@@ -16,7 +16,7 @@ body {
     width: 400px;
     height: 550px;
     margin: 0 30px;
-    background: #fff;
+    background: rgb(14, 14, 14);
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
     text-align: center;
     overflow-x: hidden;
@@ -31,12 +31,13 @@ body {
 
 
 .my-row {
-    background-color: #e3f2fd;;
+    background-color: transparent;
     height: 60px;
     cursor: pointer;
     margin-left: 5px;
     margin-right: 5px;
     margin-top: 5px;
+    margin-bottom: 10px;
 }
 
 .my-row:hover {
@@ -63,6 +64,8 @@ body {
     justify-content: start;
     align-items: center;
     display: flex;
+    font-size: 15px;
+    color: #aaa;
 }
 
 .my-anchor {
@@ -72,6 +75,58 @@ body {
 
 .my-anchor:hover {
     color: #fff;
+}
+
+.last-messsage {
+    margin-bottom: 0px;
+    color: #aaa;
+    font-size: 13px;
+    justify-content: start;
+    display: flex;
+}
+
+.custom-button {
+    background-color: transparent; 
+    border-color: transparent;
+    margin-right: 10px;
+}
+
+.custom-button:hover {
+    background-color: transparent; 
+    border: none;
+}
+
+.fas {
+    color: orangered;
+    font-size: 25px;
+}
+
+.modal-content {
+    background-color: rgb(48, 47, 47);
+}
+
+.modal {
+    opacity: 1;
+}
+
+.notification {
+    margin: 10px 10px 17px 10px;
+}
+
+.notification p{
+    margin-bottom: 3px;
+    color: #fff;
+}
+
+.notification p a {
+    color: dodgerblue;
+    text-decoration: none;
+}
+
+.notification button {
+    font-size: 14px;
+    margin-right: 5px;
+    width: 45%;
 }
 
 .menu-image {
@@ -86,6 +141,10 @@ body {
     border-radius: 25px;
 }
 
+#no-contacts {
+    color: rgb(173, 158, 158);
+    margin-top: 50px;
+}
 
 /* Mobile screen */
 @media only screen and (max-width: 500px) {
@@ -94,5 +153,8 @@ body {
         margin-left: 0px;
     }
 }
+
+
+
 
 

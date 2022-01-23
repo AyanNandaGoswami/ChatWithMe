@@ -1,15 +1,15 @@
 from rest_framework.generics import *
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
-
 from django.contrib.auth.models import User
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate
-from django.shortcuts import render, redirect
-
+from django.shortcuts import render, redirect, get_object_or_404
 from .serializers import *
 from .models import FriendList
+from chat.models import Notification
+from chat.utils import create_new_notification
 
 
 class CreateUserAPI(GenericAPIView):
@@ -57,40 +57,91 @@ class LogoutAPI(GenericAPIView):
             return redirect('index')
 
 
-class CreateFriendAPI(GenericAPIView):
+class AcceptAndRejectFriendRequestAPI(GenericAPIView):
+    '''
+    This API is for accepting and rejecting the friend request
+    it accepts a post request with notification_id, user(who will accept the request) and action(like accept/reject)
+    '''
+    serializer_class = AcceptRejectSerializer
+    queryset = FriendList.objects.all()
+    permission_classes = [permissions.IsAuthenticated, ]
+
     def post(self, request):
-        data = request.data
-        friend_obj = None
+        user = request.user
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        notification_obj = serializer.validated_data['notification_obj']
+        action = serializer.validated_data['action']
+        if action == 'accepted':
+            friend_list_obj, created = FriendList.objects.get_or_create(user=notification_obj.created_by)
+            friend_list_obj.friends.add(notification_obj.to_user)
 
-        user = User.objects.get(username=data['user'])
-        friend = User.objects.get(username=data['friend'])
+            another_list_obj, created = FriendList.objects.get_or_create(user=notification_obj.to_user)
+            another_list_obj.friends.add(notification_obj.created_by)
 
-        if FriendList.objects.filter(user=user).exists():
-            friend_obj = FriendList.objects.get(user=user)
-            friend_obj.friends.add(friend)
-        else:
-            friend_obj = FriendList.objects.create(user=user)
-            friend_obj.friends.add(friend)
-                
-        if friend_obj is not None:
+            notification_obj.status = 'inactive'
+            notification_obj.save()
+
+            data = {
+                'notification_body': f'<a href="">{notification_obj.to_user.first_name} {notification_obj.to_user.last_name}</a> accepted your friend request.',
+                'created_by': notification_obj.to_user.id,
+                'to_user': notification_obj.created_by.id,
+                'notification_type': 'accept_or_reject'
+            }
+            if create_new_notification(data):
+                pass
+            else:
+                print('notification dose not created.')
+
+            return Response({'ack': True}, status=status.HTTP_201_CREATED)
+        elif action == 'rejected':
+            notification_obj.status = 'inactive'
+            notification_obj.save()
+            data = {
+                'notification_body': f'<a href="">{notification_obj.to_user.first_name} {notification_obj.to_user.last_name}</a> rejected your friend request.',
+                'created_by': notification_obj.to_user.id,
+                'to_user': notification_obj.created_by.id,
+                'notification_type': 'accept_or_reject'
+            }
+            if create_new_notification(data):
+                pass
+            else:
+                print('notification dose not created.')
             return Response({'ack': True}, status=status.HTTP_201_CREATED)
 
 
-class RemoveFriendAPI(GenericAPIView):
-    def post(self, request):
-        data = request.data
-        friend_obj = None
+class UnfriendAPI(GenericAPIView):
+    serializer_class = UnfriendSerializer
+    queryset = FriendList.objects.all()
+    permission_classes = [permissions.IsAuthenticated, ]
 
-        user = User.objects.get(username=data['user'])
-        friend = User.objects.get(username=data['friend'])
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        friend_obj = FriendList.objects.get(user=user)
-        friend_obj.friends.remove(friend)
+        friend_obj = get_object_or_404(FriendList, user=serializer.validated_data['user'])
+        if friend_obj.friends.filter(pk=serializer.validated_data['friend'].id):
+            friend_obj.friends.remove(serializer.validated_data['friend'])
 
-        all_friends = friend_obj.friends.all()
-        serialized_data = UserSerializer(all_friends, many=True)
+        friend_obj = get_object_or_404(FriendList, user=serializer.validated_data['friend'])
+        if friend_obj.friends.filter(pk=serializer.validated_data['user'].id):
+            friend_obj.friends.remove(serializer.validated_data['user'])
 
-        return Response({'friends': serialized_data.data}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
+
+class SendFriendRequest(GenericAPIView):
+    '''
+    This API is for sending the friend request
+    and after sending a frienquest it will create a notification for that user
+    '''
+    def post(self, request, *args, **kwargs):
+        user = get_object_or_404(User, username=request.data['user'])
+        friend = get_object_or_404(User, username=request.data['friend'])
+        try:
+            Notification.objects.create(created_by=user, to_user=friend, notification_body=f'<a href="">{user.first_name} {user.last_name}</a> send you a friend request.')
+            return Response({'ack': True}, status=status.HTTP_200_OK)
+        except:
+            return Response({'ack': False}, status=status.HTTP_400_BAD_REQUEST)
 
 

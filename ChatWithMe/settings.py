@@ -39,15 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # local apps
-    'account',
-    'home',
-    'chat',
-
     # Third party apps
     'channels',
     'rest_framework',
+    'ckeditor',
 ]
+
+CUSTOM_APPS = [
+    'account.apps.AccountConfig',
+    'chat.apps.ChatConfig',
+    'home.apps.HomeConfig',
+]
+
+INSTALLED_APPS += CUSTOM_APPS
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

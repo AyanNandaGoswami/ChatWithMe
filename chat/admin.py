@@ -9,10 +9,13 @@ class ThreadAdmin(admin.ModelAdmin):
 admin.site.register(Thread, ThreadAdmin)
 
 
-# class MessageAdmin(admin.ModelAdmin):
-#     readonly_fields = ['messag_body', 'from_user', 'to_user', 'thread',]
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'messag_body', 'from_user', 'to_user', 'thread', 'timestamp']
+    readonly_fields = ['messag_body', 'from_user', 'to_user', 'thread', 'timestamp']
 
-# admin.site.register(Message, MessageAdmin)
 
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['id', 'status', 'notification_body', 'notification_type', 'created_by', 'to_user', 'created_at']
 
-admin.site.register(Message)
