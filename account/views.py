@@ -8,7 +8,7 @@ from django.db.models import Q
 
 from .serializers import UserSerializer
 from .models import FriendList
-from chat.models import Notification
+from chat.models import Notification, Message
 
 
 class RegisterView(View):
@@ -33,13 +33,9 @@ class ProfileView(View):
 
     def get(self, request):
         user = request.user
-        context = {}
         if user.is_authenticated and user.is_superuser==False:
             serialized_data = UserSerializer(user)
-            friend_list = FriendList.objects.filter(user=user)
-            for i in friend_list:
-                friend_list = i.friends.all()
-            return render(request, self.template_name, {'friends': friend_list, 'logged_in_user': serialized_data.data})
+            return render(request, self.template_name, {'logged_in_user': serialized_data.data})
         return redirect('login')
 
 
@@ -65,10 +61,14 @@ class SearchuserView(View):
         if queryset:
             context = {
                 'users': zip(queryset, friend_flag_list, request_flag_list),
-                'logged_in_user': serialized_data.data
+                'logged_in_user': serialized_data.data,
+                'data_found': True
             }
             return render(request, self.template_name, context)
         else:
-            return HttpResponse('No user\'s found with this query.')
+            context = {
+                'data_found': False
+            }
+            return render(request, self.template_name, context)
 
 

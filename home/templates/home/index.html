@@ -13,6 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
+    <!-- font awesome  -->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
     <!-- Static css links -->
     <link rel="stylesheet" href="{% static 'resources/css/index.css' %}">
 
@@ -21,20 +24,20 @@
   </head>
   <body>
 
-    <nav class="navbar navbar-expand-lg navbar navbar-light" style="background-color: #e3f2fd;">
+    <nav class="navbar navbar-expand-lg navbar navbar-light" style="background-color: #141414;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'index' %}">ChatApp</a>
+            <a class="navbar-brand" href="{% url 'index' %}" style="color: #fff;">ChatApp</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'index' %}"><i class="fas fa-home" style="color: yellow;"></i></a>
                 </li>
-                <li class="nav-item d-md-none d-lg-none">
+                <!-- <li class="nav-item d-md-none d-lg-none">
                     <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Help</a>
-                </li>
+                </li> -->
             </ul>
             
             {% if status %}
@@ -76,50 +79,6 @@
             <div>
         </div>
     </div>
-
-    
-
-
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js";
-        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-messaging.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-analytics.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyCtzO9tXSnWmmH4df3m0EQPAwpu6DP_y6o",
-            authDomain: "push-noti-aff53.firebaseapp.com",
-            projectId: "push-noti-aff53",
-            storageBucket: "push-noti-aff53.appspot.com",
-            messagingSenderId: "978127399610",
-            appId: "1:978127399610:web:c69c1bd4026d01d3a1b083",
-            measurementId: "G-NY05LLW5PY"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-
-        // Get registration token. Initially this makes a network call, once retrieved
-        // subsequent calls to getToken will return from cache.
-        const messaging = getMessaging();
-        getToken(messaging, { vapidKey: 'AIzaSyCtzO9tXSnWmmH4df3m0EQPAwpu6DP_y6o' }).then((currentToken) => {
-            console.log('ok')
-        
-        if (currentToken) {
-            // Send the token to your server and update the UI if necessary
-            // ...
-        } else {
-            // Show permission request UI
-            console.log('No registration token available. Request permission to generate one.');
-            // ...
-        }
-        }).catch((err) => {
-        console.log('An error occurred while retrieving token. ', err);
-        // ...
-        });
-      </script>
-
 
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>

@@ -7,6 +7,8 @@ from chat.models import Thread, Message, Notification
 from account.serializers import UserSerializer
 from .serializers import NotificationSerializer
 from account.models import FriendList
+import datetime
+from django.utils.timezone import localtime
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -17,7 +19,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         me = self.scope['user']     # logged in user
         friend_name = self.scope['url_route']['kwargs']['friend']   # get the username of that user, whoom you want to chat
 
-        print(friend_name)
         friend_instance = await sync_to_async(User.objects.get, thread_sensitive=True)(username=friend_name)    # get user object of friend
 
         # create a new Thread object if thread of specific chat does not exists, otherwise return the thread
@@ -95,12 +96,32 @@ class NotificationConsumer(WebsocketConsumer):
             self.channel_name
         )
         queryset = FriendList.objects.filter(user=user)
+        friend_serializeed_data = []
+        time = ''
+        date = ''
+        from_user_ = ''
         for i in queryset:
-                queryset = i.friends.all()
-        friend_serializer = UserSerializer(queryset, many=True)
+            for friend in i.friends.all():
+                last_message = Message.objects.filter((Q(from_user=user) & Q(to_user=friend)) | (Q(from_user=friend) & Q(to_user=user))).last()
+                if last_message is not None:
+                    from_user_ = 'Me: ' if last_message.from_user.id == int(user) else f"{last_message.from_user.first_name.split(' ')[0]}: "
+                    date_time = localtime(last_message.timestamp)
+                    time = "%s:%s" % (date_time.hour, date_time.minute)
+                    date = "%s-%s-%s" % (date_time.day, date_time.month, date_time.year)
+                    last_message = last_message.messag_body
+                else:
+                    last_message = ''
+                res = {
+                    **UserSerializer(friend, many=False).data,
+                    **{'last_message': last_message},
+                    **{'time': time},
+                    **{'date': date},
+                    **{'me': from_user_}
+                }
+                friend_serializeed_data.append(res)
         self.accept()
         self.send(
-            json.dumps({'notifications': serializer.data, 'friends': friend_serializer.data})
+            json.dumps({'notifications': serializer.data, 'friends': friend_serializeed_data})
         )
 
     def disconnect(self, close_code):

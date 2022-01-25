@@ -15,7 +15,7 @@
     <!-- static css links -->
     <link rel="stylesheet" href="{% static 'resources/css/profile.css' %}">
 
-    <title>Profile | {{user.first_name}} </title>
+    <title>{{user.first_name}}</title>
   </head>
   <body>
 
@@ -32,7 +32,7 @@
                     <a class="nav-link active" aria-current="page" href="{% url 'index' %}"><i class="fas fa-home" style="color: yellow;"></i></a>
                 </li>
             </ul>
-            <button type="button" class="btn btn-primary custom-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button type="button" class="btn custom-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 <i class="fas fa-bell"></i>
             </button>
 
@@ -110,7 +110,7 @@
                 document.getElementById('no-contacts').style.display = "none";
                 var list_container = document.querySelector('#list-container-id');
                 var temp = data['friends'].map(item=>(
-                    "<div class=\"row my-row\"><div class=\"col-md-3 my-col\"><a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><img src=\"https://bootdey.com/img/Content/avatar/avatar1.png\" class=\"profile-image\"></a></div><div class=\"col-md-7 my-col\">  <a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><p class=\"profile-name\">" + item.first_name + "</p></a></div><div class=\"col-md-2 my-col dropdown\"><img src=\"https://i.postimg.cc/BQgBL3Fm/ellipsis.png\" class=\"menu-image dropdown-toggle\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"><ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\"><li><a class=\"dropdown-item\" id=\"add-to-list-id\" onclick=\"removeFromList('" + item.username + "')\">Unfriend</a></li></ul></div></div>"
+                    "<div class=\"row my-row\"><div class=\"col-md-2 my-col\"><a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><img src=\"https://bootdey.com/img/Content/avatar/avatar1.png\" class=\"profile-image\"></a></div><div class=\"col-md-5 my-col\">  <a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><p class=\"profile-name\">" + item.first_name + "</p><p class=\"last-messsage\">"+ item.me + item.last_message +"</p></a></div><div class=\"col-md-3 my-col\"><p class=\"datetime\">"+ item.date + "&nbsp;" + item.time +"</p></div><div class=\"col-md-2 my-col dropdown\"><img src=\"https://i.postimg.cc/BQgBL3Fm/ellipsis.png\" class=\"menu-image dropdown-toggle\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"><ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\"><li><a class=\"dropdown-item\" id=\"add-to-list-id\" onclick=\"unfriend('" + item.id + "')\">Unfriend</a></li></ul></div></div>"
                 ));
                 list_container.innerHTML = temp;
             }

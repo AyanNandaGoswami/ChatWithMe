@@ -8,6 +8,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    background-color: rgb(48, 47, 47);
 }
 
 .register-container {
@@ -15,7 +16,7 @@ body {
     width: 550px;
     height: 100%;
     margin: 0 30px;
-    background: #fff;
+    background: rgb(24, 22, 22);
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
     text-align: center;
     border-radius: 7px;

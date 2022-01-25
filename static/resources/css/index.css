@@ -1,7 +1,11 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #fff;
+    background-color: rgb(48, 47, 47);
+}
+
+.col-md-7 p {
+    color: #aaa;
 }
 
 .custom-container {
@@ -38,6 +42,9 @@ body {
     margin-left: 20px;
 }
 
+.fas {
+    font-size: 25px;
+}
 
 /* Mobile screen */
 @media only screen and (max-width: 500px) {

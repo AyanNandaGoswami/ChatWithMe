@@ -1,7 +1,7 @@
 body {
     padding: 0;
     margin: 0;
-    background-color: #fff;
+    background-color: rgb(48, 47, 47);
 }
 
 .my-container {
@@ -16,7 +16,7 @@ body {
     width: 400px;
     height: 550px;
     margin: 0 30px;
-    background: #fff;
+    background: rgb(14, 14, 14);
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
     text-align: center;
     overflow-x: hidden;
@@ -31,16 +31,17 @@ body {
 
 
 .my-row {
-    background-color: #e3f2fd;;
+    background-color: transparent;
     height: 60px;
     cursor: pointer;
     margin-left: 5px;
     margin-right: 5px;
     margin-top: 5px;
+    border: 1px solid dodgerblue;
 }
 
 .my-row:hover {
-    background-color: grey;
+    background-color: lightskyblue;
 }
 
 .my-col {
@@ -63,6 +64,7 @@ body {
     justify-content: start;
     align-items: center;
     display: flex;
+    color: #fff;
 }
 
 .my-anchor {
@@ -84,4 +86,13 @@ body {
     padding: 5px 20px;
     margin-left: 20px;
     border-radius: 25px;
+}
+
+.fas {
+    font-size: 25px;
+}
+
+#no-data {
+    color: rgb(173, 158, 158);
+    margin-top: 50px;
 }

@@ -127,6 +127,17 @@ class UnfriendAPI(GenericAPIView):
         if friend_obj.friends.filter(pk=serializer.validated_data['user'].id):
             friend_obj.friends.remove(serializer.validated_data['user'])
 
+        data = {
+                'notification_body': f'<a href="">{serializer.validated_data["user"].first_name} {serializer.validated_data["friend"].last_name}</a> break friendship with you.',
+                'created_by': serializer.validated_data['user'].id,
+                'to_user': serializer.validated_data['friend'].id,
+                'notification_type': 'accept_or_reject'
+            }
+        if create_new_notification(data):
+            pass
+        else:
+            print('notification dose not created.')
+
         return Response(status=status.HTTP_200_OK)
 
 
