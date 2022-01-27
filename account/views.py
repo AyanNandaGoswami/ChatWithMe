@@ -50,11 +50,11 @@ class SearchuserView(View):
         if friend_obj is not None:
             for i in queryset:
                 friend_flag_list.append(True) if friend_obj.friends.filter(pk=i.id) else friend_flag_list.append(False)
-                request_flag_list.append(False) if Notification.objects.filter(Q(created_by=request.user) & Q(to_user=i)).last() is None else request_flag_list.append(True)
+                request_flag_list.append(False) if Notification.objects.filter(Q(created_by=request.user) & Q(to_user=i) & Q(status__exact='active') & Q(notification_type__exact='send')).last() is None else request_flag_list.append(True)
         else:
             for i in queryset:
                 friend_flag_list.append(False)
-                request_flag_list.append(False) if Notification.objects.filter(Q(created_by=request.user) & Q(to_user=i) & Q(status__exact='active')).last() is None else request_flag_list.append(True)
+                request_flag_list.append(False) if Notification.objects.filter(Q(created_by=request.user) & Q(to_user=i) & Q(status__exact='active') & Q(notification_type__exact='send')).last() is None else request_flag_list.append(True)
 
         serialized_data = UserSerializer(request.user)
 

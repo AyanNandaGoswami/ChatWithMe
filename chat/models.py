@@ -54,6 +54,33 @@ class Message(models.Model):
         verbose_name = 'Message'
         verbose_name_plural = 'Messages'
 
+@receiver(post_save, sender=Message)
+def _message_post_save_receiver(sender, created, instance, **kwargs):
+    if created:
+        channel_layer = get_channel_layer()
+        room_group_name = 'room_' + str(instance.to_user.id) + '_notification'
+        queryset = Notification.objects.order_by('-id').filter(Q(to_user__id=instance.to_user.id) & Q(status__exact="active"))
+        async_to_sync(channel_layer.group_send)(
+            room_group_name, {
+                'type': 'send_notification',
+                'queryset': queryset,
+                'many': True,
+                'user': instance.to_user.id
+            }
+        )
+
+        room_group_name = 'room_' + str(instance.from_user.id) + '_notification'
+        queryset = Notification.objects.order_by('-id').filter(Q(to_user__id=instance.from_user.id) & Q(status__exact="active"))
+        async_to_sync(channel_layer.group_send)(
+            room_group_name, {
+                'type': 'send_notification',
+                'queryset': queryset,
+                'many': True,
+                'user': instance.from_user.id
+            }
+        )
+
+
 
 class Notification(models.Model):
     NOTIFICATION_TYPE_CHOICES = (
@@ -89,19 +116,20 @@ def _post_save_receiver(sender, created, instance, **kwargs):
                 'type': 'send_notification',
                 'queryset': instance,
                 'many': False,
-                'user': instance.to_user
+                'user': instance.to_user.id
             }
         )
     else:
         channel_layer = get_channel_layer()
         room_group_name = 'room_' + str(instance.to_user.id) + '_notification'
-        queryset = Notification.objects.filter(Q(to_user__id=instance.to_user.id) & Q(status__exact="active"))
+        queryset = Notification.objects.order_by('-id').filter(Q(to_user__id=instance.to_user.id) & Q(status__exact="active"))
+        print(queryset)
         async_to_sync(channel_layer.group_send)(
             room_group_name, {
                 'type': 'send_notification',
                 'queryset': queryset,
                 'many': True,
-                'user': instance.to_user
+                'user': instance.to_user.id
             }
         )
 

@@ -6,10 +6,12 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Q
 from .serializers import *
 from .models import FriendList
 from chat.models import Notification
 from chat.utils import create_new_notification
+from chat.helpers import get_friend_list_with_last_message
 
 
 class CreateUserAPI(GenericAPIView):
@@ -138,7 +140,7 @@ class UnfriendAPI(GenericAPIView):
         else:
             print('notification dose not created.')
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(get_friend_list_with_last_message(serializer.validated_data['user'].id), status=status.HTTP_200_OK)
 
 
 class SendFriendRequest(GenericAPIView):
@@ -149,10 +151,16 @@ class SendFriendRequest(GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = get_object_or_404(User, username=request.data['user'])
         friend = get_object_or_404(User, username=request.data['friend'])
+        notification_obj = Notification.objects.filter(Q(created_by=user) & Q(to_user=friend) & Q(status__exact="active") & Q(notification_type__exact="send")).last()
+        # print(notification_obj)
+        if notification_obj is not None:
+            notification_obj.status = 'inactive'
+            notification_obj.save()
+            return Response({'ack': 'canceled', 'id': friend.id}, status=status.HTTP_200_OK)
         try:
             Notification.objects.create(created_by=user, to_user=friend, notification_body=f'<a href="">{user.first_name} {user.last_name}</a> send you a friend request.')
-            return Response({'ack': True}, status=status.HTTP_200_OK)
+            return Response({'ack': 'created', 'id': friend.id}, status=status.HTTP_200_OK)
         except:
-            return Response({'ack': False}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'ack': 'error'}, status=status.HTTP_400_BAD_REQUEST)
 
 

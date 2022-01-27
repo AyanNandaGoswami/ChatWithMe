@@ -14,8 +14,14 @@ function addToList(params) {
         dataType: 'json', 
         
         success: function (res) {
-            document.getElementById('friend_request_image_id').src = 'https://i.postimg.cc/wMm5qvLZ/user-2.png';
-            alert("Friend request send to " + friend);
+            if(res['ack'] == 'created') {
+                image_id = "friend_request_image_id_" + res['id']
+                document.getElementById(image_id).src = 'https://i.postimg.cc/wMm5qvLZ/user-2.png';
+            } else if(res['ack'] == 'canceled') {
+                image_id = "friend_request_image_id_" + res['id']
+                document.getElementById(image_id).src = 'https://i.postimg.cc/J0WFg3q2/add-user.png';
+            }
+            
         }
     });
 }

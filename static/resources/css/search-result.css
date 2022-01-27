@@ -37,11 +37,13 @@ body {
     margin-left: 5px;
     margin-right: 5px;
     margin-top: 5px;
-    border: 1px solid dodgerblue;
 }
 
 .my-row:hover {
-    background-color: lightskyblue;
+    background:rgba(104, 101, 101, 0.2);
+    border-radius: 30px;
+    /* transition: all .1s ease;
+    -webkit-transition: all .1s ease; */
 }
 
 .my-col {
@@ -52,7 +54,7 @@ body {
 }
 
 .profile-image {
-    height: 50px;
+    height: 40px;
     width: auto;
     border-radius: 50%;
     margin-left: 20px;

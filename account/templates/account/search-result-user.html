@@ -72,11 +72,7 @@
                                 </a>
                             </div>
                             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col dropdown">  
-                                <img src="https://i.postimg.cc/G2j8qRc6/friends.png" class="menu-image dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    {% csrf_token %}
-                                    <li><a class="dropdown-item" id="add-to-list-id" onclick="addToList('{{i.username}}')">Add to list</a></li>
-                                </ul>
+                                <img src="https://i.postimg.cc/G2j8qRc6/friends.png" class="menu-image">
                             </div>
                         {% elif request %}
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 my-col">
@@ -86,7 +82,7 @@
                                 <p class="profile-name">{{ i.first_name }} {{ i.last_name }}</p>
                             </div>
                             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col dropdown">  
-                                <img src="https://i.postimg.cc/wMm5qvLZ/user-2.png" class="menu-image">
+                                <img src="https://i.postimg.cc/wMm5qvLZ/user-2.png" onclick="addToList('{{i.username}}')" id="friend_request_image_id_{{i.id}}" class="menu-image">
                             </div>
                         {% else %}
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 my-col">
@@ -98,7 +94,7 @@
                             </div>
                             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col dropdown">
                                 {% csrf_token %}
-                                <img src="https://i.postimg.cc/J0WFg3q2/add-user.png" onclick="addToList('{{i.username}}')" id="friend_request_image_id" class="menu-image">
+                                <img src="https://i.postimg.cc/J0WFg3q2/add-user.png" onclick="addToList('{{i.username}}')" id="friend_request_image_id_{{i.id}}" class="menu-image">
                             </div>
                         {% endif %}
                     </div>

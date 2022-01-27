@@ -6,9 +6,7 @@ import json
 from chat.models import Thread, Message, Notification
 from account.serializers import UserSerializer
 from .serializers import NotificationSerializer
-from account.models import FriendList
-import datetime
-from django.utils.timezone import localtime
+from .helpers import get_friend_list_with_last_message
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -95,33 +93,10 @@ class NotificationConsumer(WebsocketConsumer):
             room_group_name,
             self.channel_name
         )
-        queryset = FriendList.objects.filter(user=user)
-        friend_serializeed_data = []
-        time = ''
-        date = ''
-        from_user_ = ''
-        for i in queryset:
-            for friend in i.friends.all():
-                last_message = Message.objects.filter((Q(from_user=user) & Q(to_user=friend)) | (Q(from_user=friend) & Q(to_user=user))).last()
-                if last_message is not None:
-                    from_user_ = 'Me: ' if last_message.from_user.id == int(user) else f"{last_message.from_user.first_name.split(' ')[0]}: "
-                    date_time = localtime(last_message.timestamp)
-                    time = "%s:%s" % (date_time.hour, date_time.minute)
-                    date = "%s-%s-%s" % (date_time.day, date_time.month, date_time.year)
-                    last_message = last_message.messag_body
-                else:
-                    last_message = ''
-                res = {
-                    **UserSerializer(friend, many=False).data,
-                    **{'last_message': last_message},
-                    **{'time': time},
-                    **{'date': date},
-                    **{'me': from_user_}
-                }
-                friend_serializeed_data.append(res)
+        friends = get_friend_list_with_last_message(user)
         self.accept()
         self.send(
-            json.dumps({'notifications': serializer.data, 'friends': friend_serializeed_data})
+            json.dumps({'notifications': serializer.data, 'friends': friends})
         )
 
     def disconnect(self, close_code):
@@ -135,22 +110,17 @@ class NotificationConsumer(WebsocketConsumer):
 
     def send_notification(self, event):
         serializer = NotificationSerializer(event['queryset'], many=event['many'])
-        
-        queryset = FriendList.objects.filter(user=event['user']).last()
-        if queryset is not None:
-            queryset = queryset.friends.all()
-        else:
-            queryset = []
+        friends = get_friend_list_with_last_message(event['user'])
 
         if event['many'] is False:
             res = {
                 'notifications': [serializer.data],
-                'friends': UserSerializer(queryset, many=True).data
+                'friends': friends
             }
         else:
             res = {
                 'notifications': serializer.data,
-                'friends': UserSerializer(queryset, many=True).data
+                'friends': friends
             }
 
         self.send(
