@@ -81,7 +81,8 @@
                             <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7 my-col">
                                 <p class="profile-name">{{ i.first_name }} {{ i.last_name }}</p>
                             </div>
-                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col dropdown">  
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 my-col dropdown">
+                                {% csrf_token %}
                                 <img src="https://i.postimg.cc/wMm5qvLZ/user-2.png" onclick="addToList('{{i.username}}')" id="friend_request_image_id_{{i.id}}" class="menu-image">
                             </div>
                         {% else %}

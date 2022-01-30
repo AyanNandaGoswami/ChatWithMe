@@ -33,8 +33,9 @@
                     <a class="nav-link active" aria-current="page" href="{% url 'index' %}"><i class="fas fa-home" style="color: yellow;"></i></a>
                 </li>
             </ul>
-            <button type="button" class="btn custom-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button type="button" class="btn icon-button" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="change_notification_status()">
                 <i class="fas fa-bell"></i>
+                <span id="notification_badge" class="icon-button__badge"></span>
             </button>
 
             <form class="d-flex" method="POST" action="/search/">
@@ -72,14 +73,22 @@
 
 
     <div>
-        <audio id="myAudio">
+        <audio id="notificationAudio">
+            <source src="{% static 'resources/music/music1.wav' %}" type="audio/mpeg">
+            Your browser does not support audio
+        </audio>
+        <audio id="chatAudio">
             <source src="{% static 'resources/music/music2.wav' %}" type="audio/mpeg">
-            Your browser
+            Your browser does not support audio
         </audio>
         <script>
-            var x = document.getElementById("myAudio");
-            function playAudio() {
+            var x = document.getElementById("notificationAudio");
+            var y = document.getElementById("chatAudio");
+            function playNotificationAudio() {
                 x.play();
+            }
+            function playChatAudio() {
+                y.play()
             }
         </script>
     </div>
@@ -89,7 +98,6 @@
     {{ logged_in_user|json_script:"logged-in-user" }}
     
     <script>
-
         const user = JSON.parse(document.getElementById('logged-in-user').textContent);
 		/* connection request */
         const chatSocket = new WebSocket(
@@ -109,30 +117,50 @@
             console.log(data);
             var notification_list = document.querySelector('#notification-container');
             let notifications = data['notifications']
+            let badge_value = 0;
+            if (data['chat_created']) {
+                playChatAudio();
+            }
+            if (data['noti_created']) {
+                playNotificationAudio();
+            }
             if(notifications.length == 0) {
                 notification_list.innerHTML = ' ';
-            }
-            for(i=0; i<notifications.length; i++){
-                playAudio();
-                if (notifications[i]['notification_type'] == "send") {
-                    var notification = "<div class=\"notification\"><p>" + notifications[i]['notification_body'] + "</p><button type=\"button\" class=\"btn btn-primary\" onclick=\"action_taken(" + notifications[i]['id'] + ", 'accepted')\">Accept</button><button type=\"button\" class=\"btn btn-secondary\" onclick=\"action_taken(" + notifications[i]['id'] + ", 'rejected')\">Reject</button></div>";
+                document.getElementById('notification_badge').style.display = "none";
+            } 
+            else {
+                notification_list.innerHTML = ' ';
+                
+                for(i=0; i<notifications.length; i++){
+                    if (notifications[i]['is_read'] == false) {
+                        badge_value+=1;
+                    }
+                    if (notifications[i]['notification_type'] == "send") {
+                        var notification = "<div class=\"notification\"><p>" + notifications[i]['notification_body'] + "</p><button type=\"button\" class=\"btn btn-primary\" onclick=\"action_taken(" + notifications[i]['id'] + ", 'accepted')\">Accept</button><button type=\"button\" class=\"btn btn-secondary\" onclick=\"action_taken(" + notifications[i]['id'] + ", 'rejected')\">Reject</button></div>";
+                    }
+                    else {
+                        var notification = "<div class=\"notification\"><p>" + notifications[i]['notification_body'] + "</p></div>";
+                    }
+                    notification_list.innerHTML += notification;
                 }
-                else {
-                    var notification = "<div class=\"notification\"><p>" + notifications[i]['notification_body'] + "</p></div>";
+                if(badge_value > 0){
+                    document.getElementById('notification_badge').style.display = "block";
+                    document.getElementById('notification_badge').innerText = badge_value;
+                } else {
+                    document.getElementById('notification_badge').style.display = "none";
                 }
-                notification_list.innerHTML += notification;
             }
 
             if(data['friends'].length === 0) {
                 var list_container = document.querySelector('#list-container-id');
-                list_container.innerHTML = "<p id=\"no-contacts\">No contacts yet.</p>";
-            } else {
+                list_container.innerHTML = "<p id=\"no-contacts\">No recent messages yet</p>";
+            } 
+            else {
                 var list_container = document.querySelector('#list-container-id');
                 var temp = data['friends'].map(item=>(
-                    "<div class=\"row my-row\"><div class=\"col-md-2 my-col\"><a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><img src=\"https://bootdey.com/img/Content/avatar/avatar1.png\" class=\"profile-image\"></a></div><div class=\"col-md-5 my-col\">  <a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><p class=\"profile-name\">" + item.first_name + "</p><p class=\"last-messsage\">"+ item.me + item.last_message +"</p></a></div><div class=\"col-md-3 my-col\"><p class=\"datetime\">"+ item.date + "&nbsp;" + item.time +"</p></div><div class=\"col-md-2 my-col dropdown\"><img src=\"https://i.postimg.cc/BQgBL3Fm/ellipsis.png\" class=\"menu-image dropdown-toggle\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"><ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\"><li><a class=\"dropdown-item\" id=\"add-to-list-id\" onclick=\"unfriend('" + item.id + "')\">Unfriend</a></li></ul></div></div>"
+                    "<div class=\"row my-row\"><div class=\"col-md-2 my-col\"><a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><img src=\"https://bootdey.com/img/Content/avatar/avatar1.png\" class=\"profile-image\"></a></div><div class=\"col-md-5 my-col\">  <a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><p class=\"profile-name\">" + item.first_name + "</p><p class=\"last-messsage " + item.is_read + "\">"+ item.me + item.last_message +"</p></a></div><div class=\"col-md-3 my-col\"><p class=\"datetime\">"+ item.date + "&nbsp;" + item.time +"</p></div><div class=\"col-md-2 my-col dropdown\"><img src=\"https://i.postimg.cc/BQgBL3Fm/ellipsis.png\" class=\"menu-image dropdown-toggle\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"><ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\"><li><a class=\"dropdown-item\" id=\"add-to-list-id\" onclick=\"unfriend('" + item.id + "')\">Unfriend</a></li></ul></div></div>"
                 ));
                 list_container.innerHTML = temp;
-
             }
         }
     </script>

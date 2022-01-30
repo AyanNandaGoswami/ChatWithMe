@@ -102,6 +102,10 @@
             + '/'
         );
 
+		chatSocket.onopen = function(e) {
+            console.log('Chatroom socket CONNECTED');
+        }
+
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
 			var class_name = 'in';

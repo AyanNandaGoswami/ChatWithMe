@@ -23,6 +23,7 @@ from account.views import LoginView, RegisterView, ProfileView, SearchuserView
 from account.api import LogoutAPI
 from chat.views import ChatIndexView
 from home.views import showFirebaseJS
+from chat.apis import UpdateNotificationIsReadValue
 
 
 urlpatterns = [
@@ -36,9 +37,9 @@ urlpatterns = [
     path('search/', SearchuserView.as_view(), name='search'),
     path('chatroom/<str:friend>/', ChatIndexView.as_view(), name='chatroom'),
     path('account/', include('account.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -151,6 +151,7 @@ class SendFriendRequest(GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = get_object_or_404(User, username=request.data['user'])
         friend = get_object_or_404(User, username=request.data['friend'])
+        print(user, friend)
         notification_obj = Notification.objects.filter(Q(created_by=user) & Q(to_user=friend) & Q(status__exact="active") & Q(notification_type__exact="send")).last()
         # print(notification_obj)
         if notification_obj is not None:

@@ -18,7 +18,7 @@ function unfriend(params) {
             
             if(res.length === 0) {
                 var list_container = document.querySelector('#list-container-id');
-                list_container.innerHTML = "<p id=\"no-contacts\">No contacts yet.</p>";
+                list_container.innerHTML = "<p id=\"no-contacts\">No recent messages yet</p>";
             } else {
                 var list_container = document.querySelector('#list-container-id');
                 var temp = res.map(item=>(
@@ -50,4 +50,23 @@ function action_taken(id, action) {
     });
 }
 
+
+function change_notification_status() {
+    var user = JSON.parse(document.getElementById('logged-in-user').textContent);
+    let csrfToken = $("input[name=csrfmiddlewaretoken").val();
+    console.log(user.id);
+    $.ajax({
+        type: 'POST',
+        url: '/chat/chnage-notification-status/',
+        data: {
+            'user': user.id,
+            csrfmiddlewaretoken: csrfToken
+        },
+        dataType: 'json', 
+        
+        success: function (res) {
+            console.log(res);
+        }
+    });
+}
 
