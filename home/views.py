@@ -19,13 +19,13 @@ def showFirebaseJS(request):
     data='importScripts("https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js");' \
          'importScripts("https://www.gstatic.com/firebasejs/9.6.2/firebase-messaging.js"); ' \
          'var firebaseConfig = {' \
-         '        apiKey: "AIzaSyCtzO9tXSnWmmH4df3m0EQPAwpu6DP_y6o",' \
-         '        authDomain: "push-noti-aff53.firebaseapp.com",' \
-         '        projectId: "push-noti-aff53,' \
-         '        storageBucket: "push-noti-aff53.appspot.com",' \
-         '        messagingSenderId: "978127399610",' \
-         '        appId: "1:978127399610:web:c69c1bd4026d01d3a1b083",' \
-         '        measurementId: "G-NY05LLW5PY"' \
+         '        apiKey: "",' \
+         '        authDomain: "",' \
+         '        projectId: ",' \
+         '        storageBucket: "",' \
+         '        messagingSenderId: "",' \
+         '        appId: "",' \
+         '        measurementId: ""' \
          ' };' \
          'firebase.initializeApp(firebaseConfig);' \
          'const messaging=firebase.messaging();' \
