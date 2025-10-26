@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.db.models import Value as V
 from django.db.models.functions import Concat
 from django.db.models import Q
@@ -9,34 +8,27 @@ from django.db.models import Q
 from .serializers import UserSerializer
 from .models import FriendList
 from chat.models import Notification, Message
+from asgiref.sync import async_to_sync
+from communication.auth_service_request import get_data_from_nats
+from utils.constants.base import AUTH_TOKEN
 
 
-class RegisterView(View):
-    template_name = 'account/register.html'
-
-    def get(self, request):
-        return render(request, self.template_name)
-
-
-class LoginView(View):
-    template_name = 'account/login.html'
-
-    def get(self, request):
-        user = request.user
-        if user.is_authenticated and user.is_superuser==False:
-            return redirect('profile')
-        return render(request, self.template_name)
-        
-
-class ProfileView(View):
-    template_name = 'account/profile.html'
+class ChatContactsListsView(View):
+    """
+    this view is to handle the recent-chat/chat-contacts screen for logged-in user
+    """
+    template_name: str = 'chat/recent_chat.html'
 
     def get(self, request):
-        user = request.user
-        if user.is_authenticated and user.is_superuser==False:
-            serialized_data = UserSerializer(user)
-            return render(request, self.template_name, {'logged_in_user': serialized_data.data})
-        return redirect('login')
+        # retrieve the access token stored in COOKIES
+        access_token: str = request.COOKIES.get(AUTH_TOKEN)
+        if not access_token:
+            redirect('/')
+        # call the async NATS handler to fetch the user_information against the access token
+        response = async_to_sync(get_data_from_nats)({
+            "access_token": access_token
+        })
+        return render(request, self.template_name, {'user': response})
 
 
 class SearchuserView(View):

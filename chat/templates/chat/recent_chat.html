@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ user.firstname }}</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'resources/css/recent_chats.css' %}" />
+</head>
+<body>
+
+  <!-- Top navbar: Welcome + Notifications + Logout -->
+  <header class="top-controls">
+    <div class="welcome">Hello, {{ user.firstname }}!</div>
+
+    <div class="controls-right">
+      <button type="button" class="icon-button" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="change_notification_status()">
+        <i class="fas fa-bell"></i>
+        <span id="notification_badge" class="icon-button__badge"></span>
+      </button>
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}"><button class="btn logout">Logout</button></a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Search Bar Section (replacing old intro text) -->
+  <section class="intro-search">
+    <form class="search-form" method="POST" action="/search/">
+      {% csrf_token %}
+      <input class="search-input" type="search" name="query" placeholder="Search contacts" required />
+      <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
+    </form>
+  </section>
+
+  <!-- Main content -->
+  <main class="profile-container">
+    <div class="contact-list-container" id="list-container-id">
+      <!-- Default sample contacts -->
+<!--      <div class="contact-row">-->
+<!--        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="contact-image" />-->
+<!--        <div class="contact-info">-->
+<!--          <a href="#" class="contact-name">Alice Johnson</a>-->
+<!--          <p class="contact-lastmsg false">Hey, how are you doing?</p>-->
+<!--        </div>-->
+<!--        <p class="contact-time">Today 10:15 AM</p>-->
+<!--      </div>-->
+
+<!--      <div class="contact-row">-->
+<!--        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="contact-image" />-->
+<!--        <div class="contact-info">-->
+<!--          <a href="#" class="contact-name">David Kim</a>-->
+<!--          <p class="contact-lastmsg true">You: Sent the files ✔</p>-->
+<!--        </div>-->
+<!--        <p class="contact-time">Yesterday</p>-->
+<!--      </div>-->
+
+<!--      <div class="contact-row">-->
+<!--        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="contact-image" />-->
+<!--        <div class="contact-info">-->
+<!--          <a href="#" class="contact-name">Emma Watson</a>-->
+<!--          <p class="contact-lastmsg false">Let’s catch up this weekend!</p>-->
+<!--        </div>-->
+<!--        <p class="contact-time">2 days ago</p>-->
+<!--      </div>-->
+    </div>
+  </main>
+
+  <!-- Notification Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Notifications</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="notification-container">
+          <!-- Default sample notifications -->
+          <div class="notification">
+            <p><strong>Emma Watson</strong> sent you a friend request</p>
+            <button type="button" class="btn btn-primary btn-sm">Accept</button>
+            <button type="button" class="btn btn-secondary btn-sm">Reject</button>
+          </div>
+          <div class="notification">
+            <p><strong>David Kim</strong> mentioned you in a message</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio -->
+  <audio id="notificationAudio"><source src="{% static 'resources/music/music1.wav' %}" type="audio/mpeg"></audio>
+  <audio id="chatAudio"><source src="{% static 'resources/music/music2.wav' %}" type="audio/mpeg"></audio>
+  <script>
+    var x = document.getElementById("notificationAudio");
+    var y = document.getElementById("chatAudio");
+    function playNotificationAudio(){ x.play(); }
+    function playChatAudio(){ y.play(); }
+  </script>
+
+  {% csrf_token %}
+  {{ user|json_script:"logged-in-user" }}
+
+  <script>
+        const user = JSON.parse(document.getElementById('logged-in-user').textContent);
+		/* connection request */
+        const chatSocket = new WebSocket(
+            'ws://'
+            + 'localhost:8001'
+            + '/notifications?user='
+            + user['uuid']
+        );
+
+        chatSocket.onopen = function(e) {
+            console.log('CONNECTED');
+        }
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log(data);
+            var notification_list = document.querySelector('#notification-container');
+            let notifications = data['notifications']
+            let badge_value = 0;
+            if (data['chat_created']) {
+                playChatAudio();
+            }
+            if (data['noti_created']) {
+                playNotificationAudio();
+            }
+            if(notifications.length == 0) {
+                notification_list.innerHTML = ' ';
+                document.getElementById('notification_badge').style.display = "none";
+            }
+            else {
+                notification_list.innerHTML = ' ';
+
+                for(i=0; i<notifications.length; i++){
+                    if (notifications[i]['is_read'] == false) {
+                        badge_value+=1;
+                    }
+                    if (notifications[i]['notification_type'] == "send") {
+                        var notification = "<div class=\"notification\"><p>" + notifications[i]['notification_body'] + "</p><button type=\"button\" class=\"btn btn-primary\" onclick=\"action_taken(" + notifications[i]['id'] + ", 'accepted')\">Accept</button><button type=\"button\" class=\"btn btn-secondary\" onclick=\"action_taken(" + notifications[i]['id'] + ", 'rejected')\">Reject</button></div>";
+                    }
+                    else {
+                        var notification = "<div class=\"notification\"><p>" + notifications[i]['notification_body'] + "</p></div>";
+                    }
+                    notification_list.innerHTML += notification;
+                }
+                if(badge_value > 0){
+                    document.getElementById('notification_badge').style.display = "block";
+                    document.getElementById('notification_badge').innerText = badge_value;
+                } else {
+                    document.getElementById('notification_badge').style.display = "none";
+                }
+            }
+
+            if(data['friends'].length === 0) {
+                var list_container = document.querySelector('#list-container-id');
+                list_container.innerHTML = "<p id=\"no-contacts\">No recent messages yet</p>";
+            }
+            else {
+                var list_container = document.querySelector('#list-container-id');
+                var temp = data['friends'].map(item=>(
+                    "<div class=\"row my-row\"><div class=\"col-md-2 my-col\"><a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><img src=\"https://bootdey.com/img/Content/avatar/avatar1.png\" class=\"profile-image\"></a></div><div class=\"col-md-5 my-col\">  <a href=\"/chatroom/" + item.username + "/\" class=\"my-anchor\"><p class=\"profile-name\">" + item.first_name + "</p><p class=\"last-messsage " + item.is_read + "\">"+ item.me + item.last_message +"</p></a></div><div class=\"col-md-3 my-col\"><p class=\"datetime\">"+ item.date + "&nbsp;" + item.time +"</p></div><div class=\"col-md-2 my-col dropdown\"><img src=\"https://i.postimg.cc/BQgBL3Fm/ellipsis.png\" class=\"menu-image dropdown-toggle\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"><ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\"><li><a class=\"dropdown-item\" id=\"add-to-list-id\" onclick=\"unfriend('" + item.id + "')\">Unfriend</a></li></ul></div></div>"
+                ));
+                list_container.innerHTML = temp;
+            }
+        }
+    </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
+  <script src="{% static 'resources/js/profile.js' %}"></script>
+
+</body>
+</html>

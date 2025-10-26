@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    .section { display: none; }
+    .section.active { display: block; }
+    .crud-buttons button { margin-right: 5px; }
+  </style>
+</head>
+<body>
+
+<div class="container my-5">
+  <h2 class="mb-4 text-center">Admin Panel</h2>
+
+  <!-- Navigation Buttons -->
+  <div class="btn-group w-100 mb-4" role="group">
+    <button class="btn btn-outline-primary" onclick="showSection('endpoints')">Manage API Endpoints</button>
+    <button class="btn btn-outline-secondary" onclick="showSection('permissions')">Manage Permissions</button>
+    <button class="btn btn-outline-success" onclick="showSection('users')">Set User Permission</button>
+  </div>
+
+  <!-- API Endpoints Section -->
+  <div id="endpoints" class="section active card p-4">
+    <h4 class="mb-3">API Endpoints</h4>
+    <ul class="list-group mb-3" id="endpointList">
+    </ul>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEndpointModal">Add Endpoint</button>
+  </div>
+
+  <!-- Permissions Section -->
+  <div id="permissions" class="section card p-4">
+    <h4 class="mb-3">Permissions</h4>
+    <ul class="list-group mb-3" id="permissionList">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Read
+        <span>
+          <button class="btn btn-sm btn-warning">Edit</button>
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Write
+        <span>
+          <button class="btn btn-sm btn-warning">Edit</button>
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </span>
+      </li>
+    </ul>
+    <button class="btn btn-secondary" onclick="alert('Add new permission')">Add Permission</button>
+  </div>
+
+  <!-- Users Section -->
+  <div id="users" class="section card p-4">
+    <h4 class="mb-3">User List</h4>
+    <ul class="list-group mb-3" id="userList">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Alice
+        <button class="btn btn-sm btn-info">Set Permissions</button>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Bob
+        <button class="btn btn-sm btn-info">Set Permissions</button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Add Endpoint Modal -->
+<div class="modal fade" id="addEndpointModal" tabindex="-1" aria-labelledby="addEndpointModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addEndpointModalLabel">Add New Endpoint</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="endpointForm">
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" required>
+            <div class="invalid-feedback" id="name_err_id"></div>
+          </div>
+          <div class="mb-3">
+            <label for="url" class="form-label">URL</label>
+            <input type="text" class="form-control" id="url" required>
+            <div class="invalid-feedback" id="url_err_id"></div>
+          </div>
+          <div class="mb-3">
+            <label for="endpointMethod" class="form-label">Method</label>
+            <select class="form-select" id="endpointMethod" required>
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <p class="error-message" id="error-msg">&nbsp;</p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitEndpoint()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Permission Denied Modal -->
+<div class="modal fade" id="permissionDeniedModal" tabindex="-1" aria-labelledby="permissionDeniedModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin-top: 60px;">
+    <div class="modal-content border-danger">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="permissionDeniedModalLabel">Permission Denied</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        You do not have permission to perform this action.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Script to trigger the permission modal -->
+<script>
+  function showPermissionDenied() {
+    const modal = new bootstrap.Modal(document.getElementById('permissionDeniedModal'));
+    modal.show();
+  }
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="{% static 'resources/js/permission_manager.js' %}"></script>
+
+</body>
+</html>

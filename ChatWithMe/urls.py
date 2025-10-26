@@ -18,9 +18,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from home.views import IndexView
-from account.views import LoginView, RegisterView, ProfileView, SearchuserView
-from account.api import LogoutAPI
+from home.views import IndexView, OptionsView, PermissionView
+from account.views import ChatContactsListsView, SearchuserView
+from account.api import LoginCallbackAPI
 from chat.views import ChatIndexView
 from home.views import showFirebaseJS
 from chat.apis import UpdateNotificationIsReadValue
@@ -30,10 +30,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('firebase-messaging-sw.js',showFirebaseJS,name="show_firebase_js"),
     path('', IndexView.as_view(), name='index'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutAPI.as_view(), name='logout'),
-    path('register/', RegisterView.as_view(), name='register'),
-    path('profile/', ProfileView.as_view(), name='profile'),
+    path('options/', OptionsView.as_view(), name='options'),
+    path('permissions-manager/', PermissionView.as_view(), name='permission-manager'),
+    path('callback', LoginCallbackAPI.as_view(), name='login_callback'),
+    path('recent/', ChatContactsListsView.as_view(), name='recent_chats'),
     path('search/', SearchuserView.as_view(), name='search'),
     path('chatroom/<str:friend>/', ChatIndexView.as_view(), name='chatroom'),
     path('account/', include('account.urls')),
@@ -42,4 +42,3 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-

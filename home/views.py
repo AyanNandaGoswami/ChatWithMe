@@ -1,18 +1,39 @@
 from django.shortcuts import render
 from django.views import View
-from django.contrib.auth.models import User
+from django.shortcuts import redirect
 from django.http import HttpResponse
+from utils.constants.home import SSO_LOGIN_URL, SSO_REGISTER_URL
+from utils.decorators import login_required
 
 
 class IndexView(View):
-    template_name = 'home/index.html'
+    template_name = 'home/index_new.html'
 
     def get(self, request):
-        auth = False
-        user = request.user
-        if user.is_authenticated and user.is_superuser==False:
-            auth = True
-        return render(request, self.template_name, {'status': auth})
+        logged_in = request.logged_in
+        if logged_in:
+            return redirect('/options')
+        return render(
+            request,
+            self.template_name,
+            {'user_logged_in': logged_in, 'login_url': SSO_LOGIN_URL, 'register_url': SSO_REGISTER_URL}
+        )
+
+
+class OptionsView(View):
+    template_name = 'home/options.html'
+
+    @login_required
+    def get(self, request):
+        return render(request, self.template_name)
+
+
+class PermissionView(View):
+    template_name = 'home/permission_manager.html'
+
+    @login_required
+    def get(self, request):
+        return render(request, self.template_name)
 
 
 def showFirebaseJS(request):

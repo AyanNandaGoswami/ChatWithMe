@@ -18,4 +18,3 @@ class MessageAdmin(admin.ModelAdmin):
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ['id', 'status', 'notification_body', 'notification_type', 'created_by', 'to_user', 'created_at']
-

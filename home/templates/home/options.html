@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="{% static 'resources/css/options.css' %}">
+    </head>
+    <body>
+        <h1>Choose an Option</h1>
+        <div class="option-container">
+            <div class="option-box" onclick="goToChatWithFriends()">
+                <div class="option-title">ChatWithFriends</div>
+            </div>
+            <div class="option-box">
+                <div class="option-title">Movie Time</div>
+            </div>
+            <div class="option-box" onclick="goToPermissionManager()">
+                <div class="option-title">Permission Manager</div>
+            </div>
+
+        </div>
+
+        <script src="{% static 'resources/js/options.js' %}"></script>
+    </body>
+</html>

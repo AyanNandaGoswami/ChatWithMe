@@ -79,20 +79,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 class NotificationConsumer(WebsocketConsumer):
     def connect(self, *args, **kwargs):
-        print('connect')
-        user = self.scope['url_route']['kwargs']['user_id']
-        room_name = user + '_notification'
+        user_uuid = self.scope['url_route']['kwargs']['user_uuid']
+        room_name = user_uuid + '_notification'
         room_group_name = 'room_%s' % room_name
-        queryset = Notification.objects.filter(Q(to_user__id=user) & Q(status__exact="active"))
+        queryset = Notification.objects.filter(Q(to_user=user_uuid) & Q(status__exact="active"))
         serializer = NotificationSerializer(queryset, many=True)
         async_to_sync(self.channel_layer.group_add)(
             room_group_name,
             self.channel_name
         )
-        friends = get_friend_list_with_last_message(user)
+        # friends = get_friend_list_with_last_message(user_uuid)
         self.accept()
         self.send(
-            json.dumps({'notifications': serializer.data, 'friends': friends})
+            json.dumps({'notifications': serializer.data, 'friends': []})
         )
 
     def disconnect(self, close_code):

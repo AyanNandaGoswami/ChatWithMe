@@ -1,62 +1,44 @@
+import time
 from rest_framework.generics import *
-from rest_framework import status, permissions
+from rest_framework import status, permissions, views
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from django.contrib.auth import login as django_login
-from django.contrib.auth import logout as django_logout
-from django.contrib.auth import authenticate
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.db.models import Q
 from .serializers import *
 from .models import FriendList
 from chat.models import Notification
 from chat.utils import create_new_notification
 from chat.helpers import get_friend_list_with_last_message
+from utils.constants.base import AUTH_TOKEN
 
 
-class CreateUserAPI(GenericAPIView):
-    serializer_class = UserSerializer
+class LoginCallbackAPI(views.APIView):
+    """
+    API to handle the login-callback request
+    """
 
-    def post(self, request):
-        data = request.data
-        
-        if User.objects.filter(email__iexact=data['email']):
-            return Response({'username': f'Email {data["email"]} is already taken.'})
-
-        serialized_data = self.serializer_class(data=data)
-
-        if serialized_data.is_valid():
-            serialized_data.save()
-            username = data['username']
-            password = data['password']
-            
-            user = authenticate(username=username, password=password)
-            if user:
-                django_login(request, user)
-            return Response({'user_deatils': serialized_data.data, 'login': True})
-        return Response(serialized_data.errors)
-
-
-class LoginAPi(GenericAPIView):
-    def post(self, request):
-        data = request.data
-        username = data['username']
-        password = data['password']
-
-        user = authenticate(username=username, password=password)
-        
-        if user and user.is_superuser==False:
-            django_login(request, user)
-            return Response({'is_authenticated': True}, status=status.HTTP_200_OK)
-        return Response({'is_authenticated': False}, status=status.HTTP_200_OK)
-
-
-class LogoutAPI(GenericAPIView):
     def get(self, request):
-        user = request.user
-        if user.is_authenticated and user.is_superuser == False:
-            django_logout(request)
-            return redirect('index')
+        # retrieve the access token from the params and set to COOKIES
+        token = request.GET.get('token')
+        response = redirect('/options')
+
+        if token:
+            # set to session
+            request.session['authToken'] = {
+                'value': token,
+                'timestamp': time.time()
+            }
+
+            response.set_cookie(
+                key=AUTH_TOKEN,
+                value=token,
+                max_age=600,
+                httponly=False,
+                secure=False,
+                samesite='Lax',
+                path='/'
+            )
+        return response
 
 
 class AcceptAndRejectFriendRequestAPI(GenericAPIView):
@@ -163,5 +145,3 @@ class SendFriendRequest(GenericAPIView):
             return Response({'ack': 'created', 'id': friend.id}, status=status.HTTP_200_OK)
         except:
             return Response({'ack': 'error'}, status=status.HTTP_400_BAD_REQUEST)
-
-

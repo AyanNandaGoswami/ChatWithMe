@@ -1,72 +1,78 @@
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: rgb(48, 47, 47);
+  background-color: #f4f6f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 }
 
 .login-container {
-    position: relative;
-    width: 330px;
-    height: 450px;
-    margin: 0 30px;
-    background: rgb(24, 22, 22);
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    border-radius: 7px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
 }
 
 .login-container h2 {
-    color: #111;
-    margin-bottom: 45px;
-    line-height: 1em;
-    font-weight: 500;
-    margin-left: 10%;
-    margin-top: 50px;
-    padding-left: 10px;
-    border-left: 5px solid dodgerblue;
-    text-align: left;
-    text-transform: uppercase;
-    font-size: 25px;
-} 
-
-.login-container a {
-    margin-top: 20px;
-    color: dodgerblue;
-    text-decoration: none;
-    font-size: 14px;
+  color: #333;
+  text-align: left;
+  font-size: 24px;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  border-left: 4px solid dodgerblue;
+  padding-left: 10px;
 }
 
-#username{
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
+.form-floating .form-control {
+  border-radius: 8px;
+  padding-left: 12px;
 }
 
-#username_label, #password_label {
-    margin-left: 10%;
+#username,
+#password {
+  width: 100%;
 }
 
-#password  {
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 30px;
+#username_label,
+#password_label {
+  margin-left: 10px;
 }
 
 #login-btn {
-    width: 80%;
-    margin: 40px auto 10px auto;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: dodgerblue;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+#login-btn:hover {
+  background-color: #1e90ff;
+}
+
+.link {
+  color: dodgerblue;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
 }
 
 .error-message {
-    color: red;
-    margin-top: 13px;
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
 }
- 

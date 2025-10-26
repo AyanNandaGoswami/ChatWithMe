@@ -41,8 +41,8 @@ def create_room_name(sender, instance, created, **kwargs):
 
 class Message(models.Model):
     messag_body = models.TextField()
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='from_user')
-    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='to_user')
+    from_user = models.CharField(max_length=36)
+    to_user = models.CharField(max_length=36)
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     is_read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default=timezone.now)
@@ -74,9 +74,9 @@ class Notification(models.Model):
         ('inactive', 'Inactive')
     )
     status = models.CharField(max_length=9, default='active', choices=STATUS_CHOICES)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification_created_by', blank=True, null=True)
+    created_by = models.CharField(max_length=36, blank=True, null=True)
     notification_body = RichTextField()
-    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification_to_user', blank=True, null=True)
+    to_user = models.CharField(max_length=36)
     notification_type = models.CharField(max_length=30, choices=NOTIFICATION_TYPE_CHOICES, default='send')
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=True)
@@ -92,7 +92,7 @@ class Notification(models.Model):
 @receiver(post_save, sender=Notification)
 def _post_save_receiver(sender, created, instance, **kwargs):
     from .helpers import enable_socket_notification_to_user
-    queryset = Notification.objects.order_by('-id').filter(Q(to_user__id=instance.to_user.id) & Q(status__exact="active"))
+    queryset = Notification.objects.order_by('-id').filter(Q(to_user=instance.to_user) & Q(status__exact="active"))
     if created:
         enable_socket_notification_to_user(instance.to_user, queryset, False, True)
     else:

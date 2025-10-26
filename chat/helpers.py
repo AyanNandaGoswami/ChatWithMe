@@ -7,12 +7,12 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 
-def get_friend_list_with_last_message(user):
-    '''
-    This function is used to get friendlist of a user and it also return the last message of each room with timestamp
-    '''
+def get_friend_list_with_last_message(user: str):
+    """
+    return friendlist of the given user with the last message
+    """
     friend_list_obj = FriendList.objects.filter(user=user).last()
-    friend_serializeed_data = []
+    friend_serialized_data = []
     time = ''
     date = ''
     from_user_ = ''
@@ -46,20 +46,22 @@ def get_friend_list_with_last_message(user):
                 **{'me': from_user_},
                 **{'is_read': is_read}
             }
-            friend_serializeed_data.append(res)
-    return friend_serializeed_data
+            friend_serialized_data.append(res)
+    return friend_serialized_data
 
 
 def enable_socket_notification_to_user(user, queryset, chat_created, noti_created):
-    '''This function is to trigger the websocket to send new queryset'''
+    """
+    this function is to trigger the websocket to send new queryset
+    """
     channel_layer = get_channel_layer()
-    room_group_name = 'room_' + str(user.id) + '_notification'
+    room_group_name = 'room_' + str(user) + '_notification'
     async_to_sync(channel_layer.group_send)(
         room_group_name, {
             'type': 'send_notification',
             'queryset': queryset,
             'many': True,
-            'user': user.id,
+            'user': user,
             'chat_created': chat_created,
             'noti_created': noti_created
         }

@@ -1,0 +1,231 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f4f6f8;
+  color: #333;
+  padding: 28px;
+}
+
+/* ===== top controls (navbar) ===== */
+.top-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto 20px auto;
+  padding: 0 14px;
+}
+
+.welcome {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #222;
+}
+
+/* controls on right */
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== Search bar in intro section ===== */
+.intro-search {
+  max-width: 420px;
+  margin: 0 auto 20px auto;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.search-input {
+  border: none;
+  padding: 10px 12px;
+  width: 100%;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.search-btn {
+  border: none;
+  background: #007bff;
+  color: #fff;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.logout {
+  background: #e63946;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* icon button */
+.icon-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  border: none;
+  cursor: pointer;
+}
+
+.icon-button i {
+  color: #007bff;
+  font-size: 18px;
+}
+
+.icon-button__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  background: #e63946;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* ===== contact list ===== */
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: calc(100vh - 180px);
+}
+
+.contact-list-container {
+  width: 420px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  padding: 16px;
+  height: 560px;
+  overflow-y: auto;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f9fafb;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  cursor: pointer;
+}
+
+.contact-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.contact-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.contact-info { flex: 1; min-width: 0; }
+
+.contact-name {
+  color: #222;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.contact-name:hover { text-decoration: underline; }
+
+.contact-lastmsg {
+  color: #777;
+  margin-top: 4px;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-time {
+  color: #999;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* ===== notification modal ===== */
+.modal-content {
+  border-radius: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.notification {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  margin-bottom: 10px;
+}
+
+.notification p { color: #333; margin-bottom: 8px; }
+
+/* Space between Accept and Reject buttons */
+.notification .btn {
+  margin-right: 8px;
+}
+
+.notification .btn:last-child {
+  margin-right: 0;
+}
+
+/* No recent messages centering */
+#no-contacts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1rem;
+  color: #777;
+  text-align: center;
+}
+
+/* Hide scrollbar */
+.contact-list-container::-webkit-scrollbar { display: none; }
+.contact-list-container { -ms-overflow-style: none; scrollbar-width: none; }
+
+@media (max-width: 520px) {
+  .top-controls { flex-direction: column; gap: 10px; align-items: flex-end; }
+  .search-input { width: 100%; }
+  .intro-search { max-width: 100%; }
+}
