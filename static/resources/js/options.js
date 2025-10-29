@@ -1,8 +1,8 @@
 
 function goToPermissionManager() {
-    window.location.href = "/permissions-manager/";  // Adjust to your Django route
+    window.location.href = "/permissions-manager/";
 }
 
 function goToChatWithFriends() {
-    window.location.href = "/recent/";
+    window.location.href = "/chat/list";
 }

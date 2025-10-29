@@ -1,0 +1,41 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'resources/css/navbar.css' %}">
+
+<header class="top-controls">
+    <div class="welcome">👋 Hello, {{ user.firstname }}!</div>
+
+    <div class="controls-right">
+        <button type="button" class="icon-button" data-bs-toggle="modal" data-bs-target="#notificationModal">
+            <i class="fas fa-bell"></i>
+            <span id="notification_badge" class="icon-button__badge"></span>
+        </button>
+
+        {% if user.is_authenticated %}
+            <a href="/"><button class="btn logout">Logout</button></a>
+        {% endif %}
+    </div>
+</header>
+
+<!-- Notification Modal (Right side vertically centered) -->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog position-fixed m-0">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="notification-container">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Audio -->
+<audio id="notificationAudio"><source src="{% static 'resources/music/music1.wav' %}" type="audio/mpeg"></audio>
+<audio id="chatAudio"><source src="{% static 'resources/music/music2.wav' %}" type="audio/mpeg"></audio>
+
+{% csrf_token %}
+{{ user|json_script:"logged-in-user" }}
+
+<script src="{% static 'resources/js/navbar.js' %}"></script>

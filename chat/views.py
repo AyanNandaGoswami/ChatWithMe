@@ -6,6 +6,19 @@ from django.db.models import Q
 from account.serializers import UserSerializer
 from .serializers import MessageSerializer
 from .models import Message, Thread
+from utils.decorators import login_required, inject_user_info
+
+
+class ChatListsView(View):
+    """
+    this view is to handle the recent-chat/chat-contacts screen for logged-in user
+    """
+    template_name: str = 'chat/recent_chat.html'
+
+    @login_required
+    @inject_user_info
+    def get(self, request, user):
+        return render(request, self.template_name, {'user': user})
 
 
 class ChatIndexView(View):

@@ -19,7 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from home.views import IndexView, OptionsView, PermissionView
-from account.views import ChatContactsListsView, SearchuserView
+from account.views import SearchuserView
 from account.api import LoginCallbackAPI
 from chat.views import ChatIndexView
 from home.views import showFirebaseJS
@@ -30,10 +30,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('firebase-messaging-sw.js',showFirebaseJS,name="show_firebase_js"),
     path('', IndexView.as_view(), name='index'),
-    path('options/', OptionsView.as_view(), name='options'),
+    path('options', OptionsView.as_view(), name='available_services'),
     path('permissions-manager/', PermissionView.as_view(), name='permission-manager'),
     path('callback', LoginCallbackAPI.as_view(), name='login_callback'),
-    path('recent/', ChatContactsListsView.as_view(), name='recent_chats'),
     path('search/', SearchuserView.as_view(), name='search'),
     path('chatroom/<str:friend>/', ChatIndexView.as_view(), name='chatroom'),
     path('account/', include('account.urls')),

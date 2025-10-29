@@ -1,26 +1,39 @@
+{% extends 'base/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link rel="stylesheet" href="{% static 'resources/css/options.css' %}">
-    </head>
-    <body>
-        <h1>Choose an Option</h1>
-        <div class="option-container">
-            <div class="option-box" onclick="goToChatWithFriends()">
-                <div class="option-title">ChatWithFriends</div>
-            </div>
-            <div class="option-box">
-                <div class="option-title">Movie Time</div>
-            </div>
-            <div class="option-box" onclick="goToPermissionManager()">
-                <div class="option-title">Permission Manager</div>
-            </div>
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'resources/css/options.css' %}">
+{% endblock %}
+
+{% block content %}
+<body>
+    <h1>What would you like to do today?</h1>
+    <p class="subtitle">Select a service below to get started.</p>
+
+    <div class="option-container">
+        <div class="option-box" onclick="goToChatWithFriends()">
+            <i class="fas fa-comments option-icon"></i>
+            <div class="option-title">Chat with Friends</div>
         </div>
 
-        <script src="{% static 'resources/js/options.js' %}"></script>
-    </body>
-</html>
+        <div class="option-box">
+            <i class="fas fa-film option-icon"></i>
+            <div class="option-title">Movie Time</div>
+        </div>
+
+        <div class="option-box" onclick="goToPermissionManager()">
+            <i class="fas fa-user-shield option-icon"></i>
+            <div class="option-title">Permission Manager</div>
+        </div>
+
+        <div class="option-box" onclick="goToFileManager()">
+            <i class="fas fa-folder-open option-icon"></i>
+            <div class="option-title">File Manager</div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'resources/js/options.js' %}"></script>
+{% endblock %}

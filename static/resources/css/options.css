@@ -5,15 +5,19 @@
   padding: 0;
 }
 
-body {
-  background-color: #f4f6f8;
-  padding: 40px;
-}
-
 h1 {
   text-align: center;
-  margin-bottom: 40px;
-  color: #333;
+  margin-bottom: 8px;
+  color: #222;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 32px;
+  font-size: 0.95rem;
 }
 
 .option-container {
@@ -35,11 +39,24 @@ h1 {
 }
 
 .option-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(145deg, #f8f9fa, #fff);
+    transform: translateY(-6px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
+
 
 .option-title {
   font-size: 1.2rem;
   color: #222;
+}
+
+.option-icon {
+    font-size: 2rem;
+    color: #007bff;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 1.5rem; }
+  .option-container { grid-template-columns: 1fr; gap: 16px; }
 }

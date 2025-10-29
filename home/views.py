@@ -3,7 +3,7 @@ from django.views import View
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from utils.constants.home import SSO_LOGIN_URL, SSO_REGISTER_URL
-from utils.decorators import login_required
+from utils.decorators import login_required, inject_user_info
 
 
 class IndexView(View):
@@ -24,8 +24,9 @@ class OptionsView(View):
     template_name = 'home/options.html'
 
     @login_required
-    def get(self, request):
-        return render(request, self.template_name)
+    @inject_user_info
+    def get(self, request, user):
+        return render(request, self.template_name, {'user': user})
 
 
 class PermissionView(View):

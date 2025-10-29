@@ -7,28 +7,8 @@ from django.db.models import Q
 
 from .serializers import UserSerializer
 from .models import FriendList
-from chat.models import Notification, Message
-from asgiref.sync import async_to_sync
-from communication.auth_service_request import get_data_from_nats
-from utils.constants.base import AUTH_TOKEN
+from chat.models import Notification
 
-
-class ChatContactsListsView(View):
-    """
-    this view is to handle the recent-chat/chat-contacts screen for logged-in user
-    """
-    template_name: str = 'chat/recent_chat.html'
-
-    def get(self, request):
-        # retrieve the access token stored in COOKIES
-        access_token: str = request.COOKIES.get(AUTH_TOKEN)
-        if not access_token:
-            redirect('/')
-        # call the async NATS handler to fetch the user_information against the access token
-        response = async_to_sync(get_data_from_nats)({
-            "access_token": access_token
-        })
-        return render(request, self.template_name, {'user': response})
 
 
 class SearchuserView(View):

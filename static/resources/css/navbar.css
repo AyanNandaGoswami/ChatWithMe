@@ -1,0 +1,173 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f4f6f8;
+  padding: 40px;
+}
+
+.top-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto 20px auto;
+  padding: 0 14px;
+}
+
+.welcome {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #222;
+}
+
+/* controls on right */
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ========== Buttons ========== */
+.logout {
+  background: #e63946;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.icon-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: none;
+  cursor: pointer;
+}
+
+.icon-button i {
+  color: #007bff;
+  font-size: 18px;
+}
+
+.icon-button__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  background: #e63946;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* ========== Notification Modal (Right Side, Vertically Centered) ========== */
+#notificationModal .modal-dialog {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%) translateX(50px);
+  margin: 0;
+  width: 320px;
+  height: 85vh; /* ✅ fixed height */
+  max-height: 85vh;
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+}
+
+#notificationModal.show .modal-dialog {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+#notificationModal .modal-content {
+  border-radius: 12px;
+  height: 100%;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px); /* 💅 subtle glass effect */
+}
+
+#notificationModal .modal-header {
+  border-bottom: 1px solid #eee;
+  padding: 12px 16px;
+}
+
+#notificationModal .modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  min-height: 300px; /* ✅ ensures visible height even when empty */
+}
+
+/* make modal backdrop invisible */
+.modal-backdrop.show {
+  opacity: 0 !important;
+}
+
+/* Notification items */
+.notification {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 10px;
+}
+
+.notification p {
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.notification .btn {
+  margin-right: 8px;
+}
+
+.notification .btn:last-child {
+  margin-right: 0;
+}
+
+/* ✅ Empty State Placeholder */
+#notification-container:empty::before {
+  content: "No notifications yet";
+  display: block;
+  text-align: center;
+  color: #777;
+  margin-top: 35%;
+  font-size: 0.95rem;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 520px) {
+  .top-controls {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  #notificationModal .modal-dialog {
+    right: 0;
+    width: 100%;
+    height: 80vh;
+  }
+}
